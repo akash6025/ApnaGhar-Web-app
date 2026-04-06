@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Your favorite properties - ApnaGhar" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self';" />
+    <title>My Favorites - ApnaGhar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css" />
+    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/favorites.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="public/logo.svg" alt="ApnaGhar" class="logo" />
+                <h1>ApnaGhar</h1>
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="favorites.html" class="nav-link active">Favorites</a>
+                <a href="admin.html" class="nav-link" id="myPropertiesNav">My Properties</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <a href="admin.html" class="nav-link" id="adminNav" style="display:none;">My Dashboard</a>
+            </div>
+            
+            <!-- Auth Section -->
+            <div class="nav-auth">
+                <div id="userBadge" class="user-badge" style="display:none;"></div>
+                <button id="loginBtn" class="btn btn-primary">Login</button>
+                <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Logout</button>
+            </div>
+            
+            <!-- Hamburger Menu -->
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header Section -->
+            <section class="favorites-header">
+                <div class="header-content">
+                    <h1>My Favorites</h1>
+                    <p>Properties you've saved for later</p>
+                </div>
+                <div class="header-actions">
+                    <div class="favorites-stats">
+                        <span class="stats-number" id="favoritesCount">0</span>
+                        <span class="stats-label">Saved Properties</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-card">
+                    <div class="filters-header">
+                        <h3>Filter Favorites</h3>
+                        <button class="btn btn-ghost" id="clearFilters">Clear All</button>
+                    </div>
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label>Property Type</label>
+                            <select id="typeFilter">
+                                <option value="">All Types</option>
+                                <option value="apartment">Apartment</option>
+                                <option value="house">House</option>
+                                <option value="villa">Villa</option>
+                                <option value="plot">Plot</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Listing Type</label>
+                            <select id="purposeFilter">
+                                <option value="">All Purposes</option>
+                                <option value="sale">Buy</option>
+                                <option value="rent">Rent</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Price Range</label>
+                            <select id="priceFilter">
+                                <option value="">Any Price</option>
+                                <option value="0-500000">Under ₹5 Lakhs</option>
+                                <option value="500000-1000000">₹5-10 Lakhs</option>
+                                <option value="1000000-2500000">₹10-25 Lakhs</option>
+                                <option value="2500000-5000000">₹25-50 Lakhs</option>
+                                <option value="5000000-10000000">₹50 Lakhs - 1 Cr</option>
+                                <option value="10000000-999999999">Above ₹1 Cr</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Sort By</label>
+                            <select id="sortFilter">
+                                <option value="recent">Recently Added</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="area">Area</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section">
+                <div class="results-header">
+                    <h3 id="resultsCount">Loading favorites...</h3>
+                    <div class="view-options">
+                        <button class="view-btn active" id="gridView" title="Grid View">⊞</button>
+                        <button class="view-btn" id="listView" title="List View">☰</button>
+                    </div>
+                </div>
+                
+                <div class="properties-container">
+                    <div class="properties-grid" id="favoritesGrid">
+                        <!-- Favorites will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Empty State -->
+            <section class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-content">
+                    <div class="empty-icon">❤️</div>
+                    <h3>No Favorites Yet</h3>
+                    <p>Start exploring properties and save your favorites to see them here.</p>
+                    <div class="empty-actions">
+                        <a href="listings.html" class="btn btn-primary">Browse Properties</a>
+                        <a href="index.html" class="btn btn-secondary">Go Home</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="year"></span> ApnaGhar. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/shared.js"></script>
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/favorites.js"></script>
+</body>
+</html>

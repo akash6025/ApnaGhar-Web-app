@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Properties - ApnaGhar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/navigation.css" />
+  <style>
+    .page-header {display:flex;justify-content:space-between;align-items:center;margin:20px 0}
+    .table {width:100%;border-collapse:collapse;background:#fff;border:1px solid #eee;border-radius:8px;overflow:hidden}
+    .table th,.table td{padding:12px 14px;border-bottom:1px solid #eee;text-align:left}
+    .table th{background:#fafafa;font-weight:600}
+    .actions{display:flex;gap:8px}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <img src="public/logo.svg" alt="ApnaGhar" class="logo" />
+        <h1>ApnaGhar</h1>
+      </div>
+      <div class="nav-menu" id="nav-menu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="favorites.html" class="nav-link">Favorites</a>
+        <a href="my-properties.html" class="nav-link active" id="myPropertiesNav">My Properties</a>
+        <a href="profile.html" class="nav-link">Profile</a>
+        <a href="admin.html" class="nav-link" id="adminNav" style="display:none;">Admin</a>
+      </div>
+      <div class="nav-auth">
+        <div id="userBadge" class="user-badge" style="display:none;"></div>
+        <a id="loginBtn" href="auth.html" class="btn btn-primary">Login / Sign Up</a>
+        <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Logout</button>
+      </div>
+      <div class="hamburger" id="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h2>My Properties</h2>
+        <a href="admin.html" class="btn btn-primary" id="addPropertyBtn">+ Add Property</a>
+      </div>
+
+      <div id="emptyState" class="card" style="display:none; text-align:center; padding:32px;">
+        <h3>No properties yet</h3>
+        <p>Click "Add Property" to create your first listing.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Your Listings</h3>
+          <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
+        </div>
+        <div class="card-body" style="overflow:auto">
+          <table class="table" id="propertiesTable">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Listing</th>
+                <th>City</th>
+                <th>Price</th>
+                <th>BHK</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> ApnaGhar. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/shared.js"></script>
+  <script type="module" src="js/navigation.js"></script>
+  <script type="module" src="js/my-properties.js"></script>
+</body>
+</html>

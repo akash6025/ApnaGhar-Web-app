@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Results - ApnaGhar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css" />
+    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/search-results.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="public/logo.svg" alt="ApnaGhar" class="logo" />
+                <h1>ApnaGhar</h1>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="admin.html" class="nav-link" id="myPropertiesNav">My Properties</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+            </div>
+            
+            <div class="nav-auth">
+                <div id="userBadge" class="user-badge" style="display:none;"></div>
+                <button id="loginBtn" class="btn btn-primary">Login</button>
+                <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Logout</button>
+            </div>
+            
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Search Bar -->
+            <div class="search-bar-sticky">
+                <input type="text" id="quickSearch" placeholder="Search location, project, or builder..." />
+                <button id="quickSearchBtn" class="btn btn-primary">Search</button>
+            </div>
+
+            <!-- Results Layout -->
+            <div class="results-layout">
+                <!-- Filters Sidebar -->
+                <aside class="filters-sidebar">
+                    <div class="filters-header">
+                        <h3>Filters</h3>
+                        <button id="clearAllFilters" class="btn-link">Clear All</button>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="filter-group">
+                        <h4>Price Range</h4>
+                        <div class="price-inputs">
+                            <input type="number" id="minPrice" placeholder="Min" />
+                            <span>to</span>
+                            <input type="number" id="maxPrice" placeholder="Max" />
+                        </div>
+                    </div>
+
+                    <!-- BHK -->
+                    <div class="filter-group">
+                        <h4>BHK</h4>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="1" class="bhk-filter" /> 1 BHK</label>
+                            <label><input type="checkbox" value="2" class="bhk-filter" /> 2 BHK</label>
+                            <label><input type="checkbox" value="3" class="bhk-filter" /> 3 BHK</label>
+                            <label><input type="checkbox" value="4" class="bhk-filter" /> 4 BHK</label>
+                            <label><input type="checkbox" value="5" class="bhk-filter" /> 5+ BHK</label>
+                        </div>
+                    </div>
+
+                    <!-- Property Type -->
+                    <div class="filter-group">
+                        <h4>Property Type</h4>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="apartment" class="type-filter" /> Apartment</label>
+                            <label><input type="checkbox" value="house" class="type-filter" /> Independent House</label>
+                            <label><input type="checkbox" value="villa" class="type-filter" /> Villa</label>
+                            <label><input type="checkbox" value="plot" class="type-filter" /> Plot/Land</label>
+                        </div>
+                    </div>
+
+                    <!-- Furnished Status -->
+                    <div class="filter-group">
+                        <h4>Furnished Status</h4>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="fully-furnished" class="furnished-filter" /> Fully Furnished</label>
+                            <label><input type="checkbox" value="semi-furnished" class="furnished-filter" /> Semi Furnished</label>
+                            <label><input type="checkbox" value="unfurnished" class="furnished-filter" /> Unfurnished</label>
+                        </div>
+                    </div>
+
+                    <!-- Parking -->
+                    <div class="filter-group">
+                        <h4>Parking</h4>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" id="parkingFilter" /> Parking Available</label>
+                        </div>
+                    </div>
+
+                    <button id="applyFiltersBtn" class="btn btn-primary btn-full">Apply Filters</button>
+                </aside>
+
+                <!-- Results Area -->
+                <div class="results-area">
+                    <!-- Results Header -->
+                    <div class="results-header">
+                        <div class="results-info">
+                            <h2><span id="resultsCount">0</span> Properties Found</h2>
+                            <p id="searchQuery"></p>
+                        </div>
+                        <div class="results-controls">
+                            <select id="sortBy" class="sort-select">
+                                <option value="relevance">Most Relevant</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                            </select>
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="grid">⊞</button>
+                                <button class="view-btn" data-view="list">☰</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Filters -->
+                    <div id="activeFilters" class="active-filters">
+                        <!-- Active filter chips will appear here -->
+                    </div>
+
+                    <!-- Properties Grid -->
+                    <div id="resultsGrid" class="properties-grid">
+                        <!-- Properties will be loaded here -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button id="loadMoreResults" class="btn btn-secondary">Load More Properties</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="year"></span> ApnaGhar. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/shared.js"></script>
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/search-results.js"></script>
+</body>
+</html>

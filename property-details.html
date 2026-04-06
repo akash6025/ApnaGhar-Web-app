@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Property Details - ApnaGhar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css" />
+    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/property-details.css" />
+</head>
+<body>
+    <!-- Page Loader -->
+    <div id="pageLoader" class="page-loader" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.8);backdrop-filter:saturate(180%) blur(4px);z-index:9999;">
+        <div style="width:48px;height:48px;border:4px solid var(--ring,#e5e7eb);border-top-color:var(--primary,#2563eb);border-radius:50%;animation:spin 1s linear infinite"></div>
+    </div>
+    <style>
+        @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+    </style>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="public/logo.svg" alt="ApnaGhar" class="logo" />
+                <h1>ApnaGhar</h1>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="my-properties.html" class="nav-link" id="myPropertiesNav">My Properties</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <a href="admin.html" class="nav-link" id="adminNav" style="display:none;">My Dashboard</a>
+            </div>
+            
+            <div class="nav-auth">
+                <div id="userBadge" class="user-badge" style="display:none;"></div>
+                <button id="loginBtn" class="btn btn-primary">Login</button>
+                <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Logout</button>
+            </div>
+            
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>›</span>
+                <span id="breadcrumbCity">Property</span>
+                <span>›</span>
+                <span id="breadcrumbTitle">Details</span>
+            </div>
+
+            <!-- Property Details -->
+            <div class="property-layout">
+                <!-- Left Column -->
+                <div class="property-main">
+                    <!-- Image Gallery -->
+                    <div class="image-gallery">
+                        <div class="main-image">
+                            <img id="mainImage" src="/public/placeholder.jpg" alt="Property" />
+                            <button class="favorite-btn" id="favoriteBtn">♡</button>
+                            <div class="image-counter" id="imageCounter">1 / 1</div>
+                        </div>
+                        <div class="thumbnail-grid" id="thumbnailGrid">
+                            <!-- Thumbnails will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Property Info -->
+                    <div class="property-info-card">
+                        <div class="property-header">
+                            <div>
+                                <h1 id="propertyTitle">Loading...</h1>
+                                <p class="property-location" id="propertyLocation">Loading...</p>
+                            </div>
+                            <div class="property-price" id="propertyPrice">₹0</div>
+                        </div>
+
+                        <!-- Key Features -->
+                        <div class="key-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">🏠</span>
+                                <span class="feature-label">Type</span>
+                                <span class="feature-value" id="propertyType">-</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🛏️</span>
+                                <span class="feature-label">BHK</span>
+                                <span class="feature-value" id="propertyBHK">-</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">📐</span>
+                                <span class="feature-label">Area</span>
+                                <span class="feature-value" id="propertyArea">-</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🚗</span>
+                                <span class="feature-label">Parking</span>
+                                <span class="feature-value" id="propertyParking">-</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🪑</span>
+                                <span class="feature-label">Furnished</span>
+                                <span class="feature-value" id="propertyFurnished">-</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🚿</span>
+                                <span class="feature-label">Bathrooms</span>
+                                <span class="feature-value" id="propertyBathrooms">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="property-section">
+                            <h3>Description</h3>
+                            <p id="propertyDescription">Loading...</p>
+                        </div>
+
+                        <!-- Amenities -->
+                        <div class="property-section">
+                            <h3>Amenities & Features</h3>
+                            <div class="amenities-grid" id="amenitiesGrid">
+                                <!-- Amenities will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="property-section">
+                            <h3>Address</h3>
+                            <p id="propertyAddress">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Contact Card -->
+                <div class="property-sidebar">
+                    <div class="contact-card">
+                        <h3>Contact Property Owner</h3>
+                        <div class="owner-info">
+                            <div class="owner-avatar">
+                                <span id="ownerInitials">O</span>
+                            </div>
+                            <div>
+                                <h4 id="ownerName">Owner Name</h4>
+                                <p id="ownerPhone">Phone Number</p>
+                            </div>
+                        </div>
+                        <button id="contactOwnerBtn" class="btn btn-primary btn-full">📞 Contact Owner</button>
+                        <button id="scheduleVisitBtn" class="btn btn-secondary btn-full">📅 Schedule Visit</button>
+                        <button id="sharePropertyBtn" class="btn btn-ghost btn-full">🔗 Share Property</button>
+                    </div>
+
+                    <!-- Similar Properties -->
+                    <div class="similar-properties">
+                        <h3>Similar Properties</h3>
+                        <div id="similarPropertiesGrid">
+                            <!-- Similar properties will load here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Contact Owner</h3>
+                <button class="modal-close" id="closeContactModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" id="contactName" required placeholder="Enter your name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Your Email</label>
+                        <input type="email" id="contactEmail" required placeholder="Enter your email" />
+                    </div>
+                    <div class="form-group">
+                        <label>Your Phone</label>
+                        <input type="tel" id="contactPhone" required placeholder="Enter your phone" />
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="contactMessage" rows="4" placeholder="I'm interested in this property..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="year"></span> ApnaGhar. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/shared.js"></script>
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/property-details.js"></script>
+</body>
+</html>

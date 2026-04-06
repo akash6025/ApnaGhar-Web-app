@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Add Property - ApnaGhar" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://firebasestorage.googleapis.com https://www.googleapis.com https://api.cloudinary.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self';" />
+  <title>Add Property - ApnaGhar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/navigation.css" />
+  <style>
+    .form-card{background:#fff;border:1px solid #eee;border-radius:12px;padding:20px}
+    .form-row{display:flex;gap:16px}
+    .form-group{flex:1;display:flex;flex-direction:column;margin-bottom:14px}
+    .form-group label{font-weight:600;margin-bottom:6px}
+    .form-group input,.form-group select,.form-group textarea{padding:10px 12px;border:1px solid #ddd;border-radius:8px}
+    .help{color:#666;font-size:12px;margin-top:4px}
+    .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,120px);gap:10px;margin-top:10px}
+    .preview-grid img{width:120px;height:90px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <img src="public/logo.svg" alt="ApnaGhar" class="logo" />
+        <h1>ApnaGhar</h1>
+      </div>
+      <div class="nav-menu" id="nav-menu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="favorites.html" class="nav-link">Favorites</a>
+        <a href="admin.html" class="nav-link" id="myPropertiesNav">My Properties</a>
+        <a href="profile.html" class="nav-link">Profile</a>
+        <a href="admin.html" class="nav-link" id="adminNav" style="display:none;">My Dashboard</a>
+      </div>
+      <div class="nav-auth">
+        <div id="userBadge" class="user-badge" style="display:none;"></div>
+        <a id="loginBtn" href="auth.html" class="btn btn-primary">Login / Sign Up</a>
+        <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Logout</button>
+      </div>
+      <div class="hamburger" id="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;margin:20px 0;">
+        <h2>Add Property</h2>
+        <a class="btn btn-secondary" href="admin.html">Back to My Dashboard</a>
+      </div>
+
+      <div class="form-card">
+        <form id="addPropertyForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Title *</label>
+              <input type="text" name="title" required placeholder="e.g., 2BHK Apartment in Andheri" />
+            </div>
+            <div class="form-group">
+              <label>Property Type *</label>
+              <select name="propertyType" required>
+                <option value="">Select</option>
+                <option value="apartment">Apartment</option>
+                <option value="house">House</option>
+                <option value="villa">Villa</option>
+                <option value="plot">Plot</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Listing Type *</label>
+              <select name="listingType" required>
+                <option value="">Select</option>
+                <option value="sale">For Sale</option>
+                <option value="rent">For Rent</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price (₹) *</label>
+              <input type="number" name="price" required min="0" />
+            </div>
+            <div class="form-group">
+              <label>Area (sq.ft)</label>
+              <input type="number" name="area" min="0" />
+            </div>
+            <div class="form-group">
+              <label>BHK</label>
+              <select name="bhk">
+                <option value="">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Bathrooms</label>
+              <input type="number" name="bathrooms" min="0" />
+            </div>
+            <div class="form-group">
+              <label>Furnishing</label>
+              <select name="furnished">
+                <option value="">Select</option>
+                <option value="unfurnished">Unfurnished</option>
+                <option value="semi-furnished">Semi-furnished</option>
+                <option value="fully-furnished">Fully-furnished</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Parking</label>
+              <select name="parking">
+                <option value="">Select</option>
+                <option value="true">Available</option>
+                <option value="false">Not Available</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" name="city" />
+            </div>
+            <div class="form-group">
+              <label>Locality</label>
+              <input type="text" name="locality" />
+            </div>
+            <div class="form-group">
+              <label>Floor</label>
+              <input type="number" name="floor" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Address</label>
+            <textarea name="address" rows="3" placeholder="Full address"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Contact Name</label>
+              <input type="text" name="contactName" placeholder="Owner/Agent name" />
+            </div>
+            <div class="form-group">
+              <label>Contact Phone</label>
+              <input type="tel" name="contactPhone" placeholder="Phone number" />
+            </div>
+            <div class="form-group"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Images</label>
+            <input type="file" id="images" accept="image/*" multiple />
+            <div class="help">You can select up to 10 images. They will be uploaded to Firebase Storage.</div>
+            <div id="preview" class="preview-grid"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" rows="4" placeholder="Describe your property..."></textarea>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Save Property</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> ApnaGhar. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/shared.js"></script>
+  <script type="module" src="js/navigation.js"></script>
+  <script src="js/cloudinary-config.js"></script>
+  <script type="module" src="js/add-property.js"></script>
+</body>
+</html>

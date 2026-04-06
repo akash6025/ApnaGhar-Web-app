@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile - ApnaGhar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css" />
+    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/profile.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="public/logo.svg" alt="ApnaGhar" class="logo" />
+                <h1>ApnaGhar</h1>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="admin.html" class="nav-link" id="myPropertiesNav">My Properties</a>
+                <a href="profile.html" class="nav-link active">Profile</a>
+                <a href="admin.html" class="nav-link" id="adminNav" style="display:none;">My Dashboard</a>
+            </div>
+            
+            <div class="nav-auth">
+                <div id="userBadge" class="user-badge" style="display:none;"></div>
+                <button id="loginBtn" class="btn btn-primary">Login</button>
+                <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Logout</button>
+            </div>
+            
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Profile Header -->
+            <section class="profile-header">
+                <div class="profile-avatar">
+                    <div class="avatar-circle">
+                        <span id="avatarInitials">U</span>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1 id="userName">Loading...</h1>
+                    <p id="userEmail">Loading...</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="propertiesCount">0</span>
+                            <span class="stat-label">Properties</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="favoritesCount">0</span>
+                            <span class="stat-label">Favorites</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="memberSince">2024</span>
+                            <span class="stat-label">Member Since</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Tabs -->
+            <section class="profile-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="info">Personal Info</button>
+                    <button class="tab-btn" data-tab="settings">Settings</button>
+                </div>
+
+                <!-- Personal Info Tab -->
+                <div class="tab-panel active" id="info-panel">
+                    <div class="card">
+                        <h3>Personal Information</h3>
+                        <form id="profileForm" class="profile-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" id="firstName" name="firstName" placeholder="Enter first name" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" id="lastName" name="lastName" placeholder="Enter last name" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="email" name="email" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" />
+                            </div>
+                            <div class="form-group">
+                                <label>Bio</label>
+                                <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- My Properties Tab -->
+                <div class="tab-panel" id="properties-panel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>My Properties</h3>
+                            <a href="admin.html" class="btn btn-primary">+ Add Property</a>
+                        </div>
+                        <div id="propertiesGrid" class="properties-grid">
+                            <!-- Properties will load here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-panel" id="settings-panel">
+                    <div class="card">
+                        <h3>Account Settings</h3>
+                        <div class="settings-list">
+                            <div class="setting-item">
+                                <div>
+                                    <h4>Email Notifications</h4>
+                                    <p>Receive updates about your properties</p>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="emailNotifications" checked />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div>
+                                    <h4>Profile Visibility</h4>
+                                    <p>Make your profile visible to others</p>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="profileVisibility" checked />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="danger-zone">
+                            <h3>Danger Zone</h3>
+                            <button id="deleteAccount" class="btn btn-danger">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="year"></span> ApnaGhar. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/shared.js"></script>
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/profile.js"></script>
+</body>
+</html>

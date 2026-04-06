@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ApnaGhar - Find and list properties to buy or rent." />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://firebasestorage.googleapis.com https://www.googleapis.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self';" />
+    <title>ApnaGhar - Find Your Dream Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css" />
+    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/home.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="public/logo.svg" alt="ApnaGhar" class="logo" />
+                <h1>ApnaGhar</h1>
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="admin.html" class="nav-link" id="myPropertiesNav">My Properties</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <a href="admin.html" class="nav-link" id="adminNav" style="display:none;">My Dashboard</a>
+            </div>
+            
+            <!-- Auth Section -->
+            <div class="nav-auth">
+                <div id="userBadge" class="user-badge" style="display:none;"></div>
+                <a id="loginBtn" href="auth.html" class="btn btn-primary">Login / Sign Up</a>
+                <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Logout</button>
+            </div>
+            
+            <!-- Hamburger Menu -->
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Hero Section with Advanced Search -->
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>Find Your Dream Home with ApnaGhar</h1>
+                <p>Browse verified listings for rent and sale across India</p>
+                
+                <!-- Advanced Search Card -->
+                <div class="advanced-search-card">
+                    <!-- Search Tabs -->
+                    <div class="search-tabs">
+                        <button class="search-tab active" data-type="sale">Buy</button>
+                        <button class="search-tab" data-type="rent">Rent</button>
+                        <button class="search-tab" data-type="commercial">Commercial</button>
+                        <button class="search-tab" data-type="plot">Plots/Land</button>
+                    </div>
+                    
+                    <!-- Search Form -->
+                    <div class="search-form">
+                        <div class="search-input-group">
+                            <select id="propertyCategory" class="search-select">
+                                <option value="">All Residential</option>
+                                <option value="apartment">Apartment</option>
+                                <option value="house">Independent House</option>
+                                <option value="villa">Villa</option>
+                                <option value="plot">Plot/Land</option>
+                            </select>
+                            <input type="text" id="searchLocation" class="search-input" placeholder="Search for locality, landmark, project, or builder" />
+                            <button id="advancedSearchBtn" class="btn btn-primary btn-search">🔍 Search</button>
+                        </div>
+                        <button id="advancedFiltersBtn" class="btn-link">Advanced Filters</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Property Categories Section -->
+        <section class="categories-section">
+            <div class="container">
+                <h2>Explore Properties by Category</h2>
+                <div class="categories-grid">
+                    <div class="category-card" data-category="apartment">
+                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400" alt="Apartments" />
+                        <div class="category-info">
+                            <h3>Residential Apartment</h3>
+                            <p id="apartmentCount">0 Properties</p>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="house">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400" alt="Houses" />
+                        <div class="category-info">
+                            <h3>Independent House/Villa</h3>
+                            <p id="houseCount">0 Properties</p>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="plot">
+                        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400" alt="Plots" />
+                        <div class="category-info">
+                            <h3>Residential Land</h3>
+                            <p id="plotCount">0 Properties</p>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="commercial">
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400" alt="Commercial" />
+                        <div class="category-info">
+                            <h3>Commercial Property</h3>
+                            <p id="commercialCount">0 Properties</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Properties Section -->
+        <section class="latest-listings" id="properties">
+            <div class="container">
+                <div class="section-header">
+                    <h3>Available Properties</h3>
+                </div>
+                <div class="properties-grid" id="propertiesGrid">
+                    <!-- Properties will be loaded here -->
+                </div>
+                <div class="load-more-container">
+                    <button class="btn btn-secondary" id="loadMoreBtn">Load More Properties</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="year"></span> ApnaGhar. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/shared.js"></script>
+  <script type="module" src="js/navigation.js"></script>
+  <script type="module" src="js/home.js"></script>
+</body>
+</html>
