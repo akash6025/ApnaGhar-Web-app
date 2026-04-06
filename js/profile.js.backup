@@ -1,0 +1,427 @@
+// Profile page functionality
+import { updateProfile, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from './firebase.js';
+import { doc, getDoc, setDoc, getDocs, collection, query, where, orderBy, serverTimestamp } from './firebase.js';
+
+let userProfile = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupTabs();
+  setupFormHandlers();
+  setupSettings();
+  
+  // Register auth handler to be called when auth state is ready
+  window.appState = window.appState || {};
+  
+  // Store the previous handler if it exists
+  const previousHandler = window.appState.authHandler;
+  
+  window.appState.authHandler = (user) => {
+    // Call previous handler if it exists
+    if (previousHandler && typeof previousHandler === 'function') {
+      previousHandler(user);
+    }
+    // Call our handler
+    checkAuthAndLoadProfile(user);
+  };
+  
+  // If user is already loaded, call immediately
+  if (window.appState.user !== undefined) {
+    checkAuthAndLoadProfile(window.appState.user);
+  } else {
+    // Show loading state while waiting for auth
+    const profileName = document.getElementById('profileName');
+    const profileEmail = document.getElementById('profileEmail');
+    if (profileName) profileName.textContent = 'Loading...';
+    if (profileEmail) profileEmail.textContent = 'Checking authentication...';
+  }
+});
+
+async function checkAuthAndLoadProfile(user) {
+  console.log('Profile: checkAuthAndLoadProfile called, user:', user ? user.email : 'null');
+  
+  if (!user) {
+    showLoginPrompt();
+    return;
+  }
+  
+  await loadUserProfile(user);
+}
+
+function showLoginPrompt() {
+  const mainContent = document.querySelector('.main-content');
+  if (mainContent) {
+    mainContent.innerHTML = `
+      <div class="container">
+        <div class="empty-state">
+          <div class="empty-content">
+            <div class="empty-icon">🔐</div>
+            <h3>Login Required</h3>
+            <p>Please log in to view your profile.</p>
+            <div class="empty-actions">
+              <a href="login.html" class="btn btn-primary">Login</a>
+              <a href="register.html" class="btn btn-secondary">Sign Up</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+async function loadUserProfile(user) {
+  console.log('loadUserProfile called for user:', user.uid, user.email);
+  
+  try {
+    // Load user data from Firestore
+    const userDoc = await getDoc(doc(window.db, 'users', user.uid));
+    userProfile = userDoc.exists() ? userDoc.data() : {};
+    console.log('User profile data:', userProfile);
+    
+    // Update UI with user data
+    updateProfileUI(user, userProfile);
+    
+    // Load user's properties and stats (removed loadUserFavorites since we removed that tab)
+    await loadUserProperties(user.uid);
+    await loadUserStats(user.uid);
+    
+    console.log('Profile loaded successfully');
+  } catch (error) {
+    console.error('Error loading user profile:', error);
+    if (window.sharedUtils && window.sharedUtils.showNotification) {
+      window.sharedUtils.showNotification('Failed to load profile', 'error');
+    }
+  }
+}
+
+function updateProfileUI(user, profile) {
+  // Update header with user data
+  const profileName = document.getElementById('profileName');
+  const profileEmail = document.getElementById('profileEmail');
+  const avatarInitials = document.getElementById('avatarInitials');
+  
+  // Use actual user data - no fallback to dummy data
+  const firstName = profile.firstName || user.displayName?.split(' ')[0] || '';
+  const lastName = profile.lastName || user.displayName?.split(' ').slice(1).join(' ') || '';
+  const displayName = firstName && lastName ? `${firstName} ${lastName}` : (user.displayName || user.email?.split('@')[0] || 'User');
+  const displayEmail = user.email || '';
+  
+  console.log('Updating profile UI:', { displayName, displayEmail });
+  
+  if (profileName) {
+    profileName.textContent = displayName;
+  }
+  
+  if (profileEmail) {
+    profileEmail.textContent = displayEmail;
+  }
+  
+  if (avatarInitials) {
+    const initials = displayName.split(' ').map(n => n[0]).filter(c => c).join('').toUpperCase().slice(0, 2);
+    avatarInitials.textContent = initials || 'U';
+  }
+  
+  // Update form fields with user data
+  const firstNameField = document.getElementById('firstName');
+  const lastNameField = document.getElementById('lastName');
+  const emailField = document.getElementById('email');
+  const phoneField = document.getElementById('phone');
+  const bioField = document.getElementById('bio');
+  
+  if (firstNameField) firstNameField.value = profile.firstName || firstName || '';
+  if (lastNameField) lastNameField.value = profile.lastName || lastName || '';
+  if (emailField) emailField.value = user.email || '';
+  if (phoneField) phoneField.value = profile.phone || '';
+  if (bioField) bioField.value = profile.bio || '';
+  
+  // Update member since
+  const memberSince = document.getElementById('memberSince');
+  if (memberSince) {
+    const year = user.metadata?.creationTime ? new Date(user.metadata.creationTime).getFullYear() : new Date().getFullYear();
+    memberSince.textContent = year;
+  }
+  
+  // Update stats with dummy data
+  const propertiesViewed = document.getElementById('propertiesViewed');
+  const favoritesCount = document.getElementById('favoritesCount');
+  const searchesCount = document.getElementById('searchesCount');
+  
+  if (propertiesViewed) propertiesViewed.textContent = '45';
+  if (favoritesCount) favoritesCount.textContent = '12';
+  if (searchesCount) searchesCount.textContent = '28';
+}
+
+async function loadUserProperties(userId) {
+  const grid = document.getElementById('userPropertiesGrid');
+  if (!grid) return;
+  
+  try {
+    const q = query(collection(window.db, 'properties'), where('ownerId', '==', userId), orderBy('createdAt', 'desc'), limit(6));
+    const snap = await getDocs(q);
+    
+    grid.innerHTML = '';
+    
+    if (snap.empty) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <h3>No Properties Listed</h3>
+          <p>You haven't listed any properties yet.</p>
+          <a href="admin.html" class="btn btn-primary">List Your First Property</a>
+        </div>
+      `;
+      return;
+    }
+    
+    snap.forEach(docSnap => {
+      const data = docSnap.data();
+      const card = window.sharedUtils.renderPropertyCard(docSnap.id, data);
+      grid.appendChild(card);
+    });
+    
+  } catch (error) {
+    console.error('Error loading user properties:', error);
+    grid.innerHTML = `
+      <div class="empty-state">
+        <h3>Failed to Load Properties</h3>
+        <p>Please try again later.</p>
+      </div>
+    `;
+  }
+}
+
+async function loadUserFavorites(userId) {
+  const grid = document.getElementById('userFavoritesGrid');
+  if (!grid) return;
+  
+  try {
+    const favoritesSnap = await getDocs(collection(window.db, 'favorites', userId, 'properties'));
+    const favoriteIds = favoritesSnap.docs.map(doc => doc.id);
+    
+    grid.innerHTML = '';
+    
+    if (favoriteIds.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <h3>No Favorites Yet</h3>
+          <p>Start exploring properties and save your favorites.</p>
+          <a href="listings.html" class="btn btn-primary">Browse Properties</a>
+        </div>
+      `;
+      return;
+    }
+    
+    // Load first 6 favorites
+    const limitedIds = favoriteIds.slice(0, 6);
+    for (const id of limitedIds) {
+      try {
+        const propertyDoc = await getDoc(doc(window.db, 'properties', id));
+        if (propertyDoc.exists()) {
+          const data = propertyDoc.data();
+          const card = window.sharedUtils.renderPropertyCard(id, data);
+          grid.appendChild(card);
+        }
+      } catch (error) {
+        console.warn(`Could not load favorite property ${id}:`, error);
+      }
+    }
+    
+  } catch (error) {
+    console.error('Error loading user favorites:', error);
+    grid.innerHTML = `
+      <div class="empty-state">
+        <h3>Failed to Load Favorites</h3>
+        <p>Please try again later.</p>
+      </div>
+    `;
+  }
+}
+
+async function loadUserStats(userId) {
+  try {
+    // Count properties
+    const propertiesSnap = await getDocs(query(collection(window.db, 'properties'), where('ownerId', '==', userId)));
+    const propertiesCount = document.getElementById('propertiesCount');
+    if (propertiesCount) {
+      propertiesCount.textContent = propertiesSnap.size;
+    }
+    
+    // Count favorites
+    const favoritesSnap = await getDocs(collection(window.db, 'favorites', userId, 'properties'));
+    const favoritesCount = document.getElementById('favoritesCount');
+    if (favoritesCount) {
+      favoritesCount.textContent = favoritesSnap.size;
+    }
+    
+  } catch (error) {
+    console.error('Error loading user stats:', error);
+  }
+}
+
+function setupTabs() {
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+  
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.dataset.tab;
+      
+      // Update active tab button
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Update active tab content
+      tabContents.forEach(content => {
+        content.classList.remove('active');
+        if (content.id === `${targetTab}-tab`) {
+          content.classList.add('active');
+        }
+      });
+    });
+  });
+}
+
+function setupFormHandlers() {
+  const personalForm = document.getElementById('personalForm');
+  const cancelBtn = document.getElementById('cancelEdit');
+  
+  if (personalForm) {
+    personalForm.addEventListener('submit', handleProfileUpdate);
+  }
+  
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      const user = window.appState?.user;
+      if (user) {
+        updateProfileUI(user, userProfile);
+      }
+    });
+  }
+}
+
+async function handleProfileUpdate(e) {
+  e.preventDefault();
+  
+  const user = window.appState?.user;
+  if (!user) return;
+  
+  const formData = new FormData(e.target);
+  const firstName = formData.get('firstName').trim();
+  const lastName = formData.get('lastName').trim();
+  const phone = formData.get('phone').trim();
+  const bio = formData.get('bio').trim();
+  
+  try {
+    // Update Firebase Auth profile
+    await updateProfile(user, {
+      displayName: `${firstName} ${lastName}`
+    });
+    
+    // Update Firestore user document
+    await setDoc(doc(window.db, 'users', user.uid), {
+      firstName,
+      lastName,
+      phone: phone || null,
+      bio: bio || null,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    
+    // Update local profile
+    userProfile = { ...userProfile, firstName, lastName, phone, bio };
+    
+    // Update UI
+    updateProfileUI(user, userProfile);
+    
+    if (window.sharedUtils && window.sharedUtils.showNotification) {
+      window.sharedUtils.showNotification('Profile updated successfully!', 'success');
+    }
+    
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    if (window.sharedUtils && window.sharedUtils.showNotification) {
+      window.sharedUtils.showNotification('Failed to update profile', 'error');
+    }
+  }
+}
+
+function setupSettings() {
+  const deleteAccountBtn = document.getElementById('deleteAccount');
+  const logoutBtn = document.getElementById('logoutBtn');
+  
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener('click', handleDeleteAccount);
+  }
+  
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+  }
+}
+
+async function handleLogout() {
+  try {
+    await signOut(window.auth);
+    if (window.sharedUtils && window.sharedUtils.showNotification) {
+      window.sharedUtils.showNotification('Logged out successfully', 'success');
+    }
+    // Redirect to home page
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 500);
+  } catch (error) {
+    console.error('Error logging out:', error);
+    if (window.sharedUtils && window.sharedUtils.showNotification) {
+      window.sharedUtils.showNotification('Failed to logout', 'error');
+    }
+  }
+}
+
+async function handleDeleteAccount() {
+  const user = window.appState?.user;
+  if (!user) return;
+  
+  const confirmed = confirm(
+    'Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data including properties and favorites.'
+  );
+  
+  if (!confirmed) return;
+  
+  const doubleConfirmed = confirm(
+    'This is your final warning. All your data will be permanently deleted. Type "DELETE" to confirm.'
+  );
+  
+  if (!doubleConfirmed) return;
+  
+  try {
+    // Note: In a real app, you'd need to implement account deletion
+    // This would typically involve a backend function due to Firebase limitations
+    if (window.sharedUtils && window.sharedUtils.showNotification) {
+      window.sharedUtils.showNotification('Account deletion requires backend implementation', 'error');
+    }
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    if (window.sharedUtils && window.sharedUtils.showNotification) {
+      window.sharedUtils.showNotification('Failed to delete account', 'error');
+    }
+  }
+}
+
+// Listen for auth state changes
+if (window.appState) {
+  const originalAuthHandler = window.appState.authHandler;
+  window.appState.authHandler = function(user) {
+    if (originalAuthHandler) originalAuthHandler(user);
+    
+    if (user) {
+      loadUserProfile(user);
+    } else {
+      showLoginPrompt();
+    }
+  };
+}
+
+// Export functions for global access
+window.profileUtils = {
+  loadUserProfile,
+  updateProfileUI,
+  loadUserProperties,
+  loadUserFavorites,
+  loadUserStats
+};
